@@ -26,7 +26,13 @@ public class GeneratorDemo {
             + "\"fields\":["
             + "  { \"name\":\"str1\", \"type\":\"string\" },"
             + "  { \"name\":\"str2\", \"type\":\"string\" },"
-            + "  { \"name\":\"int1\", \"type\":\"int\" }"
+            + "  { \"name\":\"int1\", \"type\":\"int\" },"
+            + "  { \"name\": \"packet_info\", \"type\": {"
+            + "        \"type\": \"record\","
+            + "        \"name\": \"packet_data\","
+            + "        \"fields\": ["
+            + "              { \"name\": \"demo\", \"type\": \"string\" }"
+            + "          ]}}"
             + "]}";
 
     /**
@@ -42,6 +48,7 @@ public class GeneratorDemo {
 
         Schema.Parser parser = new Schema.Parser();
         Schema schema = parser.parse(USER_SCHEMA);
+        System.out.println(schema.toString(true));
         Injection<GenericRecord, byte[]> recordInjection = GenericAvroCodecs.toBinary(schema);
 
         KafkaProducer<String, byte[]> producer = new KafkaProducer<>(props);
@@ -52,9 +59,10 @@ public class GeneratorDemo {
             avroRecord.put("str1", "Str 1-" + random.nextInt(10));
             avroRecord.put("str2", "Str 2-" + random.nextInt(1000));
             avroRecord.put("int1", random.nextInt(10000));
-
+            GenericData.Record packetInfo = new GenericData.Record(schema.getField("packet_info").schema());
+            packetInfo.put("demo", "value");
+            avroRecord.put("packet_info", packetInfo);
             byte[] bytes = recordInjection.apply(avroRecord);
-
             ProducerRecord<String, byte[]> record = new ProducerRecord<>("mytopic", bytes);
             producer.send(record);
             Thread.sleep(100);
