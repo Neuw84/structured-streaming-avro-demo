@@ -25,8 +25,6 @@ import org.apache.spark.sql.avro.SchemaConverters;
  */
 public class StructuredDemo {
 
-    private static Injection<GenericRecord, byte[]> recordInjection;
-    private static StructType type;
     private static final String USER_SCHEMA = "{"
             + "\"type\":\"record\","
             + "\"name\":\"myrecord\","
@@ -43,12 +41,6 @@ public class StructuredDemo {
             + "]}";
     private static Schema.Parser parser = new Schema.Parser();
     private static Schema schema = parser.parse(USER_SCHEMA);
-
-    static { //once per VM, lazily
-        recordInjection = GenericAvroCodecs.toBinary(schema);
-        type = (StructType) SchemaConverters.toSqlType(schema).dataType();
-
-    }
 
     public static void main(String[] args) throws StreamingQueryException, TimeoutException {
         //set log4j programmatically
