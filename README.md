@@ -1,10 +1,10 @@
 # structured-streaming-avro-demo
 
-Spark 2.2. Structured Streaming Kafka Avro demo using Twitter´s bijection in Java. 
+Spark 3.0.0 Structured Streaming Kafka Avro demo using the new Avro Datasource. 
 
 ## Requirements 
 
-* Kafka: 0.10.2
+* Kafka: 2.0
 * Java 8
 * Maven
 
