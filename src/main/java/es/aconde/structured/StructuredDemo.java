@@ -10,17 +10,13 @@ import org.apache.log4j.LogManager;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.streaming.StreamingQuery;
 import org.apache.spark.sql.streaming.StreamingQueryException;
 import org.apache.spark.sql.types.StructType;
 import static org.apache.spark.sql.functions.*;
-import static org.apache.spark.sql.types.DataTypes.*;
 import static org.apache.spark.sql.avro.functions.*;
 import org.apache.spark.sql.avro.SchemaConverters;
-
-import org.apache.spark.sql.types.*;
 
 /**
  * Structured streaming demo using Avro'ed Kafka topic as input
@@ -86,12 +82,12 @@ public class StructuredDemo {
                 .load();
         //print kafka schema
         ds1.printSchema();
+        
         //start the streaming query
         Dataset<Row> ds2 = ds1
-                //  .select("value").as(Encoders.BINARY())
                 .select(from_avro(col("value"), USER_SCHEMA).as("rows"))
-                // .selectExpr("deserialize(value) as rows")
                 .select("rows.*");
+
         //print avro schema converted to dataframe :)
         ds2.printSchema();
 
