@@ -53,7 +53,7 @@ public class GeneratorDemo {
 
         KafkaProducer<String, byte[]> producer = new KafkaProducer<>(props);
         SplittableRandom random = new SplittableRandom();
-
+        int count = 0;
         while (true) {
             GenericData.Record avroRecord = new GenericData.Record(schema);
             avroRecord.put("str1", "Str 1-" + random.nextInt(10));
@@ -65,7 +65,10 @@ public class GeneratorDemo {
             byte[] bytes = recordInjection.apply(avroRecord);
             ProducerRecord<String, byte[]> record = new ProducerRecord<>("mytopic", bytes);
             producer.send(record);
-            Thread.sleep(100);
+            count++;
+            if (count % 300000 == 0) {
+                Thread.sleep(500);
+            }
         }
 
     }
